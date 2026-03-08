@@ -177,11 +177,11 @@
                         <p class="rsvp-subtitle">Ucapan Selamat, Doa, & Konfirmasi Kehadiran</p>
             <div class="rsvp-form-card">
                 <form id="rsvp-form">
-                    <div class="form-group reveal-up delay-1">
+                    <div class="form-group">
                         <label>Nama Anda</label>
                         <input type="text" id="nama" placeholder="Nama Lengkap" required>
                     </div>
-                    <div class="form-group reveal-up delay-2">
+                    <div class="form-group">
                         <label>Konfirmasi Kehadiran</label>
                         <div class="attendance-options">
                             <button type="button" class="btn-option">Hadir</button>
@@ -190,14 +190,25 @@
                         </div>
                         <input type="hidden" id="attendance-val">
                     </div>
-                    <div class="form-group reveal-up delay-3">
+                    <div class="form-group">
                         <label>Tulis Ucapan</label>
                         <textarea id="ucapan" placeholder="Tulis Ucapan & Doa Terbaikmu"></textarea>
                     </div>
                     <button type="submit" class="btn-send">Kirim</button>
                 </form>
             </div>
-            <div id="rsvp-list"></div>
+              <!-- List RSVP (opsional, kalau mau tampilkan) -->
+    <div id="rsvp-list"></div>
+
+    <!-- Utterances Comments langsung di bawah RSVP -->
+    <div id="comments" style="margin-top:40px;"></div>
+    <script src="https://utteranc.es/client.js"
+        repo="cahayarengkuh/invite-wedding"
+        issue-term="pathname"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+    </script>
             <div class="pagination-container" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
         <button class="btn-prev-step" style="display: none;">← Sebelumnya</button>
         <button class="btn-next-step" style="display: none;">Selanjutnya →</button>
@@ -210,7 +221,7 @@
                 Suatu kebahagiaan & kehormatan bagi kami, apabila Bapak/Ibu/Saudara/i, berkenan hadir dan memberikan do'a restu kepada kami.
             </p>
         </section>
-
+        
         <div class="nav-bar">
             <a href="#mempelai" class="nav-item">
                 <i data-feather="home"></i>
