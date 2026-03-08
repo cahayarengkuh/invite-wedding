@@ -165,12 +165,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // 2. Logika Tombol Opsi (Hadir/Ragu/Tidak)
     buttons.forEach(btn => {
+        // Simpan label asli ke dataset saat halaman dimuat
         btn.dataset.label = btn.innerText.trim().replace('✓ ', '').replace('✕ ', '').replace('? ', '');
 
         btn.addEventListener("click", function() {
+            // Hapus kelas 'active' dari semua tombol, tapi JANGAN mengubah innerHTML tombol lain
             buttons.forEach(b => {
-                b.classList.remove("active", "hadir", "ragu", "tidak-hadir");
-                b.innerHTML = b.dataset.label; 
+                b.classList.remove("active");
             });
 
             const label = this.dataset.label;
@@ -287,8 +288,8 @@ document.addEventListener("DOMContentLoaded", () => {
         kiri = !kiri;
     });
 
-    /* 4. TOMBOL */
-    document.querySelectorAll("button, a").forEach(el => {
+    /* 4. TOMBOL - Kecuali tombol RSVP */
+    document.querySelectorAll("button:not(.btn-option), a:not(.btn-option)").forEach(el => {
         el.setAttribute("data-cine", "up");
     });
 
