@@ -179,24 +179,24 @@
                 <form id="rsvp-form">
                     <div class="form-group">
                         <label>Nama Anda</label>
-                        <input type="text" id="nama" placeholder="Nama Lengkap" required>
+                        <input type="text" id="nama" name="nama" placeholder="Nama Lengkap" required>
                     </div>
                     <div class="form-group">
                         <label>Konfirmasi Kehadiran</label>
                         <div class="attendance-options">
-                            <button type="button" class="btn-option">Hadir</button>
-                            <button type="button" class="btn-option">Ragu</button>
-                            <button type="button" class="btn-option">Tidak Hadir</button>
-                        </div>
-                        <input type="hidden" id="attendance-val">
+                            <button type="button" class="btn-option" data-value="Hadir">Hadir</button>
+                            <button type="button" class="btn-option" data-value="Ragu">Ragu</button>
+                            <button type="button" class="btn-option" data-value="Tidak Hadir">Tidak Hadir</button>                        </div>
+                        <input type="hidden" id="attendance-val" name="hadir">
                     </div>
                     <div class="form-group">
                         <label>Tulis Ucapan</label>
-                        <textarea id="ucapan" placeholder="Tulis Ucapan & Doa Terbaikmu"></textarea>
+                        <textarea id="ucapan" name="ucapan" placeholder="Tulis Ucapan & Doa Terbaikmu"></textarea>
                     </div>
                     <button type="submit" class="btn-send">Kirim</button>
                 </form>
             </div>
+              <!-- List RSVP (opsional, kalau mau tampilkan) -->
     <div id="rsvp-list"></div>
             <div class="pagination-container" style="display: flex; justify-content: center; gap: 20px; margin-top: 20px;">
         <button class="btn-prev-step" style="display: none;">← Sebelumnya</button>
@@ -273,6 +273,84 @@ function mulaiUndangan() {
     window.addEventListener("pointerdown", stopScroll, { once: true });
 }
 </script>
+
+<script>
+const scriptURL = "https://script.google.com/macros/s/AKfycbyiq6h6ZAtGODrPSTk3GxN0NlVlyhZx5S1bHFoYPHWOBM0l0VKQyzWjryAuXPM-4VmfXw/exec";
+const form = document.forms['rsvp-form'];
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+
+  fetch(scriptURL, {
+    method: 'POST',
+    body: new FormData(form)
+  })
+ .then(response => {
+  alert("Pesan berhasil dikirim");
+  form.reset();
+  loadComments();
+})
+  .catch(error => {
+    alert("Gagal mengirim");
+    console.error(error);
+  });
+});
+</script>
+<script>
+document.querySelectorAll(".btn-option").forEach(button => {
+  button.addEventListener("click", function() {
+
+    document.querySelectorAll(".btn-option").forEach(btn => {
+      btn.classList.remove("active");
+    });
+
+    this.classList.add("active");
+
+    document.getElementById("attendance-val").value = this.dataset.value;
+
+  });
+});
+</script>
+
+<script>
+
+function loadComments() {
+    // Tetap mengambil data Online dari Google Sheets
+    fetch(scriptURL)
+        .then(res => res.json())
+        .then(data => {
+            let list = document.getElementById("rsvp-list");
+            list.innerHTML = "";
+
+            // Kita proses datanya agar tampil cantik sesuai CSS
+            data.reverse().forEach(item => {
+                if (!item.nama) return; 
+
+                // --- LOGIKA WARNA (Agar sesuai CSS badge) ---
+                let statusClass = "hadir";
+                let icon = "✓";
+                let statusText = item.hadir || "Hadir";
+
+                if (statusText.toLowerCase().includes("tidak")) {
+                    statusClass = "tidak-hadir";
+                    icon = "✕";
+                } else if (statusText.toLowerCase().includes("ragu")) {
+                    statusClass = "ragu";
+                    icon = "?";
+                }
+
+                // --- STRUKTUR HTML (Agar sesuai CSS .rsvp-item) ---
+                list.innerHTML += `
+                <div class="rsvp-item reveal active">
+                    <span class="badge ${statusClass}">${icon} ${statusText}</span>
+                    <h4>${item.nama}</h4>
+                    <p>${item.ucapan || "-"}</p>
+                </div>
+                `;
+            });
+        })
+        .catch(err => console.error("Gagal memuat:", err));
+}
+</script>
 </body>
 </html>
-
