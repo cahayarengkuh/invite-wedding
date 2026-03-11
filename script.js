@@ -1,6 +1,6 @@
 /* ================= CONFIG DATA ================= */
 const DATA = {
-    tamu: "Ka ledy",
+    tamu: "Deira",
     wanita: {
         panggil: "Dinda",
         lengkap: "Dinda YP",
@@ -8,20 +8,20 @@ const DATA = {
         ortu: "Bapak Dinda & Ibu Dinda"
     },
     pria: {
-        panggil: "Dewa",
-        lengkap: "Dewa putu",
-        anak: "Putra ke 3",
-        ortu: "Bapak Dewa & Ibu Dewa"
+        panggil: "Raka",
+        lengkap: "Raka",
+        anak: "Putra ke 1",
+        ortu: "Bapak Raka & Ibu Raka"
     },
     jadwal: {
         tgl: "18 Oktober 2026",
         hari: "SABTU, 18 OKTOBER 2026",
         jam: "09:00 - s/d Selesai",
-        lokasi: "Jl. Elephant Park Taro, Tegallalang, Kabupaten Gianyar, Bali, 80561.",
+        lokasi:"Mekarsaluyu, Kec. Cimenyan, Kota Bandung, Jawa Barat 40198.",
         target: "2026-10-18T09:00:00"
     },
     story: {
-        kenal: "3 November 2025",
+        kenal: "18 OKTOBER 2025",
         nikah: "18 OKTOBER 2026"
     },
     lain: {
@@ -98,157 +98,43 @@ function tambahKeKalender() {
     window.open(url, '_blank');
 }
 
-/* ================= RSVP LOGIC ================= */
-let rsvpOffset = 0; 
-const rsvpLimit = 3; 
-
-function saveRSVP(data) {
-    let rsvpData = JSON.parse(localStorage.getItem("rsvpData")) || [];
-    rsvpData.unshift(data); 
-    localStorage.setItem("rsvpData", JSON.stringify(rsvpData));
-}
-
-function loadRSVP() {
-    const rsvpData = JSON.parse(localStorage.getItem("rsvpData")) || [];
-    const listContainer = document.getElementById("rsvp-list");
-    const paginationNav = document.querySelector(".pagination-container");
-    
-    if (!listContainer) return;
-    listContainer.innerHTML = ""; 
-
-    const dataDipilih = rsvpData.slice(rsvpOffset, rsvpOffset + rsvpLimit);
-
-    dataDipilih.forEach(data => {
-        const div = document.createElement("div");
-        div.classList.add("rsvp-item");
-        
-        let statusClass = "hadir";
-        let icon = "✓";
-        
-        let cleanText = data.hadir.replace(/[✓✕\?]\s?/, "");
-
-        if (cleanText.toLowerCase().includes("tidak")) {
-            statusClass = "tidak-hadir";
-            icon = "✕";
-        } else if (cleanText.toLowerCase().includes("ragu")) {
-            statusClass = "ragu";
-            icon = "?";
-        }
-        
-        div.innerHTML = `
-            <h4>${data.nama}</h4>
-            <span class="badge ${statusClass}">${icon} ${cleanText}</span>
-            <p>${data.ucapan || "-"}</p>
-        `;
-        listContainer.appendChild(div);
-    });
-
-    if (paginationNav) {
-        const prevBtn = paginationNav.querySelector('.btn-prev-step');
-        const nextBtn = paginationNav.querySelector('.btn-next-step');
-        paginationNav.style.display = (rsvpData.length > rsvpLimit) ? "flex" : "none";
-        if (nextBtn) nextBtn.style.display = (rsvpOffset + rsvpLimit < rsvpData.length) ? "block" : "none";
-        if (prevBtn) prevBtn.style.display = (rsvpOffset > 0) ? "block" : "none";
-    }
-}
-
 /* ================= INITIALIZATION ================= */
 document.addEventListener("DOMContentLoaded", () => {
-    // 1. Jalankan fungsi awal
     updateTeks();
     startCountdown();
-    loadRSVP(); 
 
-    const form = document.getElementById("rsvp-form");
     const buttons = document.querySelectorAll(".btn-option");
     const attendanceInput = document.getElementById("attendance-val");
 
-    // 2. Logika Tombol Opsi (Hadir/Ragu/Tidak)
     buttons.forEach(btn => {
-        // Simpan label asli ke dataset saat halaman dimuat
-        btn.dataset.label = btn.innerText.trim().replace('✓ ', '').replace('✕ ', '').replace('? ', '');
+        // Bersihkan teks dari simbol apapun saat halaman dimuat
+        btn.dataset.label = btn.innerText.trim().replace(/[✓✕?]/g, '').trim();
 
         btn.addEventListener("click", function() {
-            // Hapus kelas 'active' dari semua tombol, tapi JANGAN mengubah innerHTML tombol lain
             buttons.forEach(b => {
-                b.classList.remove("active");
+                b.classList.remove("active", "hadir", "ragu", "tidak-hadir");
+                b.innerHTML = b.dataset.label; 
             });
 
-            const label = this.dataset.label;
+            const label = this.dataset.label; // Isinya: "Hadir", "Ragu", atau "Tidak Hadir"
             this.classList.add("active");
 
-            let finalValue = label;
             if (label === "Hadir") {
                 this.classList.add("hadir");
                 this.innerHTML = "✓ " + label;
-                finalValue = "✓ " + label;
             } else if (label === "Ragu") {
                 this.classList.add("ragu");
                 this.innerHTML = "? " + label;
-                finalValue = "? " + label;
             } else if (label === "Tidak Hadir") {
                 this.classList.add("tidak-hadir");
                 this.innerHTML = "✕ " + label;
-                finalValue = "✕ " + label;
             }
 
-            if (attendanceInput) attendanceInput.value = finalValue;
+            // PENTING: Kirim teks murni (label) saja ke Google Sheet agar tidak double ikon
+            if (attendanceInput) attendanceInput.value = label; 
         });
     });
-
-    // 3. Logika Submit Form
-    if (form) {
-        form.addEventListener("submit", function (e) {
-            e.preventDefault();
-            const data = {
-                nama: document.getElementById("nama").value,
-                ucapan: document.getElementById("ucapan").value,
-                hadir: attendanceInput.value 
-            };
-
-            if (!data.nama || !data.hadir) {
-                alert("Mohon isi Nama dan Kehadiran");
-                return;
-            }
-
-            saveRSVP(data);
-            rsvpOffset = 0; 
-            loadRSVP();
-            form.reset();
-            
-            buttons.forEach(btn => {
-                btn.classList.remove("active", "hadir", "ragu", "tidak-hadir");
-                btn.innerHTML = btn.dataset.label;
-            });
-            attendanceInput.value = "";
-        });
-    }
-
-    // 4. Navigasi Pagination
-    const nextBtn = document.querySelector('.btn-next-step');
-    if (nextBtn) {
-        nextBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            rsvpOffset += rsvpLimit;
-            loadRSVP();
-            const rsvpList = document.getElementById("rsvp-list");
-            if (rsvpList) rsvpList.scrollIntoView({ behavior: 'smooth' });
-        });
-    }
-
-    const prevBtn = document.querySelector('.btn-prev-step');
-    if (prevBtn) {
-        prevBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            rsvpOffset -= rsvpLimit;
-            if (rsvpOffset < 0) rsvpOffset = 0;
-            loadRSVP();
-            const rsvpList = document.getElementById("rsvp-list");
-            if (rsvpList) rsvpList.scrollIntoView({ behavior: 'smooth' });
-        });
-    }
-});
-
+});   
 /* ================= CEK SCROLL UNTUK REVEAL ANIMATION ================= */
 function cekScroll() {
     const elements = document.querySelectorAll('[class*="reveal"]');
