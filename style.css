@@ -497,6 +497,7 @@ body {
 
 /* 6. Tombol Google Maps (Warna Earth Tone) */
 .btn-maps {
+    display: inline-block; /* WAJIB: Supaya dia jadi kotak sendiri dan tidak nyambung ke teks alamat */
     background-color: #8B5E3C !important;
     color: #ffffff !important;
     border-radius: 50px !important;
@@ -504,8 +505,10 @@ body {
     font-size: 0.75rem;
     font-weight: 600;
     text-decoration: none;
-    margin-top: 20px;
+    margin-top: 15px; /* Beri jarak dari alamat */
+    margin-bottom: 10px; /* Beri jarak ke bawah agar tidak mepet frame */
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    text-align: center;
 }
 .ring-icon {
     width: 70px;
@@ -1437,4 +1440,5 @@ body {
     animation: none !important;
     transition: all 0.5s ease !important;
 }
+
 
