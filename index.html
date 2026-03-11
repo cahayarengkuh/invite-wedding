@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undangan Dewa & Dinda</title>
+    <title>Undangan RAKA & Dinda</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,9 +29,9 @@
             </div>
             <div class="cover-text">
                 <p class="sub-title">The Wedding Of</p>
-                <h1 class="names">Dewa & Dinda</h1>
+                <h1 class="names">RAKA & Dinda</h1>
                 <p>Kepada Yth. Bapak/Ibu/Saudara/i</p>
-                <h3 id="txt-tamu" class="guest-name">Ka Ledy</h3>
+                <h3 id="txt-tamu" class="guest-name">Deira</h3>
                 <button class="btn-open" onclick="mulaiUndangan()">
                     <i class="fa-solid fa-envelope" style="font-size:12px;"></i>
                     <span>Buka Undangan</span>
@@ -46,7 +46,7 @@
             </div>
             <div class="mempelai-content">
                 <p class="sub-title">The Wedding Of</p>
-                <h1 class="names home-names reveal up">Dewa & Dinda</h1>
+                <h1 class="names home-names reveal up">Raka & Dinda</h1>
                 <div class="home-info">
                     <p class="home-desc">We invited you to celebrate our wedding</p>
                     <h3 id="home-tgl" class="home-date">18 Oktober 2026</h3>
@@ -92,11 +92,11 @@
         <div class="page reveal" id="mempelai-pria">
             <div class="ampersand">&</div>
             <div class="arch-frame"><img src="img/foto-pria.png" alt="Pria"></div>
-            <h2 class="mempelai-nickname">Dewa</h2>
-            <h3 class="mempelai-fullname">Dewa Putu</h3>
-            <div class="parents-info">Putra dari Bapak Dewa & Ibu Dewa</div>
-            <a href="https://instagram.com/Dewaputu" target="_blank" class="btn-insta-premium">
-                <i class="fa-brands fa-instagram"></i> <span>Dewaputu</span>
+            <h2 class="mempelai-nickname">Raka</h2>
+            <h3 class="mempelai-fullname">Raka</h3>
+            <div class="parents-info">Putra dari Bapak Raka & Ibu Raka</div>
+            <a href="https://instagram.com/Rakana" target="_blank" class="btn-insta-premium">
+                <i class="fa-brands fa-instagram"></i> <span>Rakana</span>
             </a>
         </div>
 
@@ -120,12 +120,11 @@
                 <p class="date-text">SABTU, 18 OKTOBER 2026</p>
                 <p class="time-text">09:00 - Selesai</p>
                 <div class="location-text">
-                    <strong>KEDIAMAN MEMPELAI PRIA</strong><br>
-                    Jl. Elephant Park Taro, Tegallalang,<br>
-                    Kabupaten Gianyar, Bali.
+                    <strong>KEDIAMAN MEMPELAI WANITA</strong><br>
+                  Resort Dago Pakar Raya 2B, Jl. Raya Resort,<br>
+    Mekarsaluyu, Kec. Cimenyan, Kota Bandung, Jawa Barat 40198.
                 </div>
-<a href="https://www.google.com/maps/dir/?api=1&destination=Elephant+Safari+Park+Taro+Tegallalang+Bali" target="_blank" class="btn-maps">
-                    Google Maps
+<a href="https://www.google.com/maps/search/?api=1&query=Resor+Dago+Pakar+Bandung" target="_blank" class="btn-maps">                    Google Maps
                 </a>
             </div>
         </section>
@@ -165,7 +164,7 @@
             <h2 class="story-main-title">Our Story</h2>
             <div class="story-box">
                 <h3 class="story-label">PERKENALAN</h3>
-               <p class="story-date-text">3 November 2025</p> 
+               <p class="story-date-text">18 oktober 2025</p> 
             </div>
             <div class="story-box">
                 <h3 class="story-label">PERNIKAHAN</h3>
@@ -205,7 +204,7 @@
 </section>
 
         <section id="dewa-dinda-final" class="page">
-            <h2 class="names-latin-final">Dewa & Dinda</h2>
+            <h2 class="names-latin-final">Raka & Dinda</h2>
             <p class="greeting-text-final">
                 Suatu kebahagiaan & kehormatan bagi kami, apabila Bapak/Ibu/Saudara/i, berkenan hadir dan memberikan do'a restu kepada kami.
             </p>
@@ -296,61 +295,92 @@ form.addEventListener('submit', function(e) {
   });
 });
 </script>
+
 <script>
+// 1. Logika Klik Tombol Opsi Kehadiran
 document.querySelectorAll(".btn-option").forEach(button => {
-  button.addEventListener("click", function() {
-
-    document.querySelectorAll(".btn-option").forEach(btn => {
-      btn.classList.remove("active");
+    button.addEventListener("click", function() {
+        // Hapus kelas active dari semua tombol opsi
+        document.querySelectorAll(".btn-option").forEach(btn => btn.classList.remove("active"));
+        // Tambah kelas active ke tombol yang diklik
+        this.classList.add("active");
+        // Isi input hidden dengan nilai dari data-value tombol
+        document.getElementById("attendance-val").value = this.dataset.value;
     });
-
-    this.classList.add("active");
-
-    document.getElementById("attendance-val").value = this.dataset.value;
-
-  });
 });
-</script>
 
-<script>
+// 2. Logika RSVP & Wishes (Pagination & Load Data)
+let rsvpOffset = 0; 
+const rsvpLimit = 3; 
+let allData = []; 
 
 function loadComments() {
-    // Tetap mengambil data Online dari Google Sheets
     fetch(scriptURL)
         .then(res => res.json())
         .then(data => {
-            let list = document.getElementById("rsvp-list");
-            list.innerHTML = "";
-
-            // Kita proses datanya agar tampil cantik sesuai CSS
-            data.reverse().forEach(item => {
-                if (!item.nama) return; 
-
-                // --- LOGIKA WARNA (Agar sesuai CSS badge) ---
-                let statusClass = "hadir";
-                let icon = "✓";
-                let statusText = item.hadir || "Hadir";
-
-                if (statusText.toLowerCase().includes("tidak")) {
-                    statusClass = "tidak-hadir";
-                    icon = "✕";
-                } else if (statusText.toLowerCase().includes("ragu")) {
-                    statusClass = "ragu";
-                    icon = "?";
-                }
-
-                // --- STRUKTUR HTML (Agar sesuai CSS .rsvp-item) ---
-                list.innerHTML += `
-                <div class="rsvp-item reveal active">
-                    <span class="badge ${statusClass}">${icon} ${statusText}</span>
-                    <h4>${item.nama}</h4>
-                    <p>${item.ucapan || "-"}</p>
-                </div>
-                `;
-            });
+            allData = data.reverse(); 
+            renderComments();
         })
         .catch(err => console.error("Gagal memuat:", err));
 }
+
+function renderComments() {
+    const list = document.getElementById("rsvp-list");
+    const prevBtn = document.querySelector('.btn-prev-step');
+    const nextBtn = document.querySelector('.btn-next-step');
+    
+    if (!list) return;
+    list.innerHTML = "";
+
+    const dataDipilih = allData.slice(rsvpOffset, rsvpOffset + rsvpLimit);
+
+    dataDipilih.forEach(item => {
+        if (!item.nama) return;
+        
+        // Logika favorit kamu: membersihkan teks dari simbol lama agar tidak double
+        let statusTextRaw = item.hadir || "Hadir";
+        let statusText = statusTextRaw.replace(/[✓✕?]/g, '').trim(); 
+
+        let statusClass = "hadir";
+        let icon = "✓";
+
+        if (statusText.toLowerCase().includes("tidak")) { 
+            statusClass = "tidak-hadir"; 
+            icon = "✕"; 
+        } else if (statusText.toLowerCase().includes("ragu")) { 
+            statusClass = "ragu"; 
+            icon = "?"; 
+        }
+
+        list.innerHTML += `
+            <div class="rsvp-item reveal active">
+                <span class="badge ${statusClass}">${icon} ${statusText}</span>
+                <h4>${item.nama}</h4>
+                <p>${item.ucapan || "-"}</p>
+            </div>
+        `;
+    });
+
+    // Logika menampilkan/menyembunyikan tombol pagination
+    if (prevBtn) prevBtn.style.display = (rsvpOffset > 0) ? "block" : "none";
+    if (nextBtn) nextBtn.style.display = (rsvpOffset + rsvpLimit < allData.length) ? "block" : "none";
+}
+
+// 3. Event Listener untuk Navigasi Pagination
+document.querySelector('.btn-next-step').addEventListener('click', () => {
+    rsvpOffset += rsvpLimit;
+    renderComments();
+    document.getElementById("rsvp-list").scrollIntoView({ behavior: 'smooth' });
+});
+
+document.querySelector('.btn-prev-step').addEventListener('click', () => {
+    rsvpOffset -= rsvpLimit;
+    renderComments();
+    document.getElementById("rsvp-list").scrollIntoView({ behavior: 'smooth' });
+});
+
+// Jalankan saat pertama kali dibuka
+loadComments();
 </script>
 </body>
 </html>
