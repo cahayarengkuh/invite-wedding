@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Undangan RAKA & Dinda</title>
+    <title>Undangan Dewa & Dinda</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,9 +29,9 @@
             </div>
             <div class="cover-text">
                 <p class="sub-title">The Wedding Of</p>
-                <h1 class="names">RAKA & Dinda</h1>
+                <h1 class="names">Dewa & Dinda</h1>
                 <p>Kepada Yth. Bapak/Ibu/Saudara/i</p>
-                <h3 id="txt-tamu" class="guest-name">Deira</h3>
+                <h3 id="txt-tamu" class="guest-name">Nama tamu</h3>
                 <button class="btn-open" onclick="mulaiUndangan()">
                     <i class="fa-solid fa-envelope" style="font-size:12px;"></i>
                     <span>Buka Undangan</span>
@@ -46,7 +46,7 @@
             </div>
             <div class="mempelai-content">
                 <p class="sub-title">The Wedding Of</p>
-                <h1 class="names home-names reveal up">Raka & Dinda</h1>
+                <h1 class="names home-names reveal up">Dewa & Dinda</h1>
                 <div class="home-info">
                     <p class="home-desc">We invited you to celebrate our wedding</p>
                     <h3 id="home-tgl" class="home-date">18 Oktober 2026</h3>
@@ -92,11 +92,11 @@
         <div class="page reveal" id="mempelai-pria">
             <div class="ampersand">&</div>
             <div class="arch-frame"><img src="img/foto-pria.png" alt="Pria"></div>
-            <h2 class="mempelai-nickname">Raka</h2>
-            <h3 class="mempelai-fullname">Raka</h3>
-            <div class="parents-info">Putra dari Bapak Raka & Ibu Raka</div>
-            <a href="https://instagram.com/Rakana" target="_blank" class="btn-insta-premium">
-                <i class="fa-brands fa-instagram"></i> <span>Rakana</span>
+            <h2 class="mempelai-nickname">Dewa Putu</h2>
+            <h3 class="mempelai-fullname">Dewa</h3>
+            <div class="parents-info">Putra dari Bapak Dewa & Ibu Dewa</div>
+            <a href="https://instagram.com/Dewaputu" target="_blank" class="btn-insta-premium">
+                <i class="fa-brands fa-instagram"></i> <span>Dewaputu</span>
             </a>
         </div>
 
@@ -120,11 +120,10 @@
                 <p class="date-text">SABTU, 18 OKTOBER 2026</p>
                 <p class="time-text">09:00 - Selesai</p>
                 <div class="location-text">
-                    <strong>KEDIAMAN MEMPELAI WANITA</strong><br>
-                  Resort Dago Pakar Raya 2B, Jl. Raya Resort,<br>
-    Mekarsaluyu, Kec. Cimenyan, Kota Bandung, Jawa Barat 40198.
+                    <strong>KEDIAMAN MEMPELAI PRIA</strong><br>
+                            The trans resort bali 
                 </div>
-<a href="https://www.google.com/maps/search/?api=1&query=Resor+Dago+Pakar+Bandung" target="_blank" class="btn-maps">                    Google Maps
+<a href="https://www.google.com/maps/search/?api=1&query=The+Trans+Resort+Bali" target="_blank" class="btn-maps">                    Google Maps
                 </a>
             </div>
         </section>
@@ -204,7 +203,7 @@
 </section>
 
         <section id="dewa-dinda-final" class="page">
-            <h2 class="names-latin-final">Raka & Dinda</h2>
+            <h2 class="names-latin-final">Dewa & Dinda</h2>
             <p class="greeting-text-final">
                 Suatu kebahagiaan & kehormatan bagi kami, apabila Bapak/Ibu/Saudara/i, berkenan hadir dan memberikan do'a restu kepada kami.
             </p>
@@ -277,109 +276,168 @@ function mulaiUndangan() {
 const scriptURL = "https://script.google.com/macros/s/AKfycbyiq6h6ZAtGODrPSTk3GxN0NlVlyhZx5S1bHFoYPHWOBM0l0VKQyzWjryAuXPM-4VmfXw/exec";
 const form = document.forms['rsvp-form'];
 
-form.addEventListener('submit', function(e) {
-  e.preventDefault();
+/* ================= SUBMIT FORM ================= */
+form.addEventListener("submit", function(e){
+e.preventDefault();
 
-  fetch(scriptURL, {
-    method: 'POST',
-    body: new FormData(form)
-  })
- .then(response => {
-  alert("Pesan berhasil dikirim");
-  form.reset();
-  loadComments();
+const nama = document.getElementById("nama").value;
+const ucapan = document.getElementById("ucapan").value;
+
+let hadir = document.getElementById("attendance-val").value;
+
+if(!hadir){
+const activeBtn = document.querySelector(".btn-option.active");
+hadir = activeBtn ? activeBtn.dataset.value : "Hadir";
+}
+
+let icon = "✓";
+let statusClass = "hadir";
+
+if(hadir === "Tidak Hadir"){
+icon = "✕";
+statusClass = "tidak-hadir";
+}
+
+if(hadir === "Ragu"){
+icon = "?";
+statusClass = "ragu";
+}
+
+/* kirim ke Google Sheet */
+fetch(scriptURL,{
+method:"POST",
+body:new FormData(form)
+});
+
+/* tambahkan ke data pagination */
+allData.unshift({
+nama:nama,
+hadir:hadir,
+ucapan:ucapan
+});
+
+/* reset posisi ke halaman pertama */
+rsvpOffset = 0;
+
+/* render ulang komentar */
+renderComments();
+
+form.reset();
+
+});
+
+/* ================= TOMBOL KEHADIRAN ================= */
+
+document.querySelectorAll(".btn-option").forEach(button=>{
+button.addEventListener("click",function(){
+
+document.querySelectorAll(".btn-option").forEach(btn=>{
+btn.classList.remove("active");
+});
+
+this.classList.add("active");
+
+document.getElementById("attendance-val").value=this.dataset.value;
+
+});
+});
+
+/* ================= RSVP DATA ================= */
+
+let rsvpOffset = 0;
+const rsvpLimit = 2;
+let allData = [];
+
+/* ================= LOAD COMMENT ================= */
+
+function loadComments(){
+
+fetch(scriptURL + "?t=" + Date.now())
+.then(res=>res.json())
+.then(data=>{
+
+if(!Array.isArray(data)) return;
+
+allData = data.reverse();
+
+renderComments();
+
 })
-  .catch(error => {
-    alert("Gagal mengirim");
-    console.error(error);
-  });
-});
-</script>
+.catch(err=>console.log("RSVP error:",err));
 
-<script>
-// 1. Logika Klik Tombol Opsi Kehadiran
-document.querySelectorAll(".btn-option").forEach(button => {
-    button.addEventListener("click", function() {
-        // Hapus kelas active dari semua tombol opsi
-        document.querySelectorAll(".btn-option").forEach(btn => btn.classList.remove("active"));
-        // Tambah kelas active ke tombol yang diklik
-        this.classList.add("active");
-        // Isi input hidden dengan nilai dari data-value tombol
-        document.getElementById("attendance-val").value = this.dataset.value;
-    });
-});
-
-// 2. Logika RSVP & Wishes (Pagination & Load Data)
-let rsvpOffset = 0; 
-const rsvpLimit = 3; 
-let allData = []; 
-
-function loadComments() {
-    fetch(scriptURL)
-        .then(res => res.json())
-        .then(data => {
-            allData = data.reverse(); 
-            renderComments();
-        })
-        .catch(err => console.error("Gagal memuat:", err));
 }
 
-function renderComments() {
-    const list = document.getElementById("rsvp-list");
-    const prevBtn = document.querySelector('.btn-prev-step');
-    const nextBtn = document.querySelector('.btn-next-step');
-    
-    if (!list) return;
-    list.innerHTML = "";
+/* ================= RENDER COMMENT ================= */
 
-    const dataDipilih = allData.slice(rsvpOffset, rsvpOffset + rsvpLimit);
+function renderComments(){
 
-    dataDipilih.forEach(item => {
-        if (!item.nama) return;
-        
-        // Logika favorit kamu: membersihkan teks dari simbol lama agar tidak double
-        let statusTextRaw = item.hadir || "Hadir";
-        let statusText = statusTextRaw.replace(/[✓✕?]/g, '').trim(); 
+const list = document.getElementById("rsvp-list");
+const prevBtn = document.querySelector(".btn-prev-step");
+const nextBtn = document.querySelector(".btn-next-step");
 
-        let statusClass = "hadir";
-        let icon = "✓";
+if(!list) return;
 
-        if (statusText.toLowerCase().includes("tidak")) { 
-            statusClass = "tidak-hadir"; 
-            icon = "✕"; 
-        } else if (statusText.toLowerCase().includes("ragu")) { 
-            statusClass = "ragu"; 
-            icon = "?"; 
-        }
+list.innerHTML="";
 
-        list.innerHTML += `
-            <div class="rsvp-item reveal active">
-                <span class="badge ${statusClass}">${icon} ${statusText}</span>
-                <h4>${item.nama}</h4>
-                <p>${item.ucapan || "-"}</p>
-            </div>
-        `;
-    });
+const dataDipilih = allData.slice(rsvpOffset, rsvpOffset + rsvpLimit);
 
-    // Logika menampilkan/menyembunyikan tombol pagination
-    if (prevBtn) prevBtn.style.display = (rsvpOffset > 0) ? "block" : "none";
-    if (nextBtn) nextBtn.style.display = (rsvpOffset + rsvpLimit < allData.length) ? "block" : "none";
+dataDipilih.forEach(item=>{
+
+if(!item.nama) return;
+
+let statusTextRaw = item.hadir || "Hadir";
+let statusText = statusTextRaw.replace(/[✓✕?]/g,"").trim();
+
+let statusClass="hadir";
+let icon="✓";
+
+if(statusText.toLowerCase().includes("tidak")){
+statusClass="tidak-hadir";
+icon="✕";
+}
+else if(statusText.toLowerCase().includes("ragu")){
+statusClass="ragu";
+icon="?";
 }
 
-// 3. Event Listener untuk Navigasi Pagination
-document.querySelector('.btn-next-step').addEventListener('click', () => {
-    rsvpOffset += rsvpLimit;
-    renderComments();
-    document.getElementById("rsvp-list").scrollIntoView({ behavior: 'smooth' });
+list.innerHTML += `
+<div class="rsvp-item reveal active">
+<span class="badge ${statusClass}">${icon} ${statusText}</span>
+<h4>${item.nama}</h4>
+<p>${item.ucapan || "-"}</p>
+</div>
+`;
+
 });
 
-document.querySelector('.btn-prev-step').addEventListener('click', () => {
-    rsvpOffset -= rsvpLimit;
-    renderComments();
-    document.getElementById("rsvp-list").scrollIntoView({ behavior: 'smooth' });
-});
+/* tombol pagination */
 
-// Jalankan saat pertama kali dibuka
+if(prevBtn) prevBtn.style.display = rsvpOffset > 0 ? "block" : "none";
+if(nextBtn) nextBtn.style.display = (rsvpOffset + rsvpLimit < allData.length) ? "block" : "none";
+
+}
+
+/* ================= PAGINATION ================= */
+
+const nextBtn = document.querySelector(".btn-next-step");
+const prevBtn = document.querySelector(".btn-prev-step");
+
+if(nextBtn){
+nextBtn.addEventListener("click",()=>{
+rsvpOffset += rsvpLimit;
+renderComments();
+});
+}
+
+if(prevBtn){
+prevBtn.addEventListener("click",()=>{
+rsvpOffset -= rsvpLimit;
+renderComments();
+});
+}
+
+/* ================= START ================= */
+
 loadComments();
 </script>
 </body>
