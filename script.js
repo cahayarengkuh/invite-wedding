@@ -1,6 +1,6 @@
 /* ================= CONFIG DATA ================= */
 const DATA = {
-    tamu: "Deira",
+    tamu: "Nama tamu",
     wanita: {
         panggil: "Dinda",
         lengkap: "Dinda YP",
@@ -8,24 +8,24 @@ const DATA = {
         ortu: "Bapak Dinda & Ibu Dinda"
     },
     pria: {
-        panggil: "Raka",
-        lengkap: "Raka",
-        anak: "Putra ke 1",
+        panggil: "Dewa",
+        lengkap: "Dewa",
+        anak: "Putra ke 3",
         ortu: "Bapak Raka & Ibu Raka"
     },
     jadwal: {
         tgl: "18 Oktober 2026",
         hari: "SABTU, 18 OKTOBER 2026",
         jam: "09:00 - s/d Selesai",
-        lokasi:"Mekarsaluyu, Kec. Cimenyan, Kota Bandung, Jawa Barat 40198.",
+        lokasi:"The Trans Resort Bali",
         target: "2026-10-18T09:00:00"
     },
     story: {
-        kenal: "18 OKTOBER 2025",
+        kenal: "03 SEPTEMBER 2025",
         nikah: "18 OKTOBER 2026"
     },
     lain: {
-        dc: "Coklat Mahogany, Coksu, Cream, Putih",
+        dc: "Sky blue",
         rek: "1111 2222 3333 4444",
         bank: "Dinda" 
     }
@@ -59,8 +59,7 @@ function startCountdown() {
 }
 
 function updateTeks() {
-    const namaKop = `${DATA.wanita.panggil} & ${DATA.pria.panggil}`;
-    document.querySelectorAll(".names").forEach(el => { el.innerText = namaKop; });
+const namaKop = `${DATA.pria.panggil} & ${DATA.wanita.panggil}`;    document.querySelectorAll(".names").forEach(el => { el.innerText = namaKop; });
     setText("txt-tamu", DATA.tamu);
     setText("home-tgl", DATA.jadwal.tgl);
     
@@ -102,8 +101,8 @@ function tambahKeKalender() {
 document.addEventListener("DOMContentLoaded", () => {
     updateTeks();
     startCountdown();
-
-    const buttons = document.querySelectorAll(".btn-option");
+});
+const buttons = document.querySelectorAll(".btn-option");
     const attendanceInput = document.getElementById("attendance-val");
 
     buttons.forEach(btn => {
@@ -134,7 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (attendanceInput) attendanceInput.value = label; 
         });
     });
-});   
+      
 /* ================= CEK SCROLL UNTUK REVEAL ANIMATION ================= */
 function cekScroll() {
     const elements = document.querySelectorAll('[class*="reveal"]');
@@ -237,21 +236,26 @@ let autoScrollActive = false;
 let autoScrollRAF;
 
 function startAutoScroll() {
-    autoScrollActive = true;
-    const speed = 0.25;
 
-    function scrollStep() {
-        if (!autoScrollActive) return;
+autoScrollActive = true;
+const speed = 0.25;
 
-        window.scrollBy(0, speed);
-        cekScroll();
+function scrollstep() {
 
-        autoScrollRAF = requestAnimationFrame(scrollStep);
-    }
+if (!autoScrollActive) return;
 
-    autoScrollRAF = requestAnimationFrame(scrollStep);
+// scroll halaman seperti biasa
+window.scrollBy(0, speed);
+
+cekScroll();
+
+autoScrollRAF = requestAnimationFrame(scrollstep);
+
 }
 
+autoScrollRAF = requestAnimationFrame(scrollstep);
+
+}
 /* ================= FUNGSI STOP & DETEKSI INTERAKSI ================= */
 
 function stopAutoScroll() {
@@ -285,3 +289,23 @@ document.addEventListener("DOMContentLoaded", () => {
         el.classList.remove("active");
     });
 });
+/* ================= AMBIL NAMA TAMU DARI LINK ================= */
+
+function getNamaTamu(){
+
+const params = new URLSearchParams(window.location.search);
+const nama = params.get("to");
+
+if(nama){
+
+const namaFix = decodeURIComponent(nama.replace(/\+/g," "));
+
+const el = document.getElementById("txt-tamu");
+
+if(el) el.innerText = namaFix;
+
+}
+
+}
+
+document.addEventListener("DOMContentLoaded", getNamaTamu);
